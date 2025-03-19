@@ -49,17 +49,19 @@ public class PedidoController {
 		this.pedidoService = pedidoService;
 		this.clienteService = clienteService;
 	}
-//add pedido
+ 
 	
 	@PostMapping("/addPedido")
 	public ResponseEntity<Void> guardarPedido(
 	    @RequestBody Pedido pedido, 
 	    @AuthenticationPrincipal Cliente cliente
 	) { 
-	    if (cliente == null) {
-	        logger.log(Level.WARNING, "Cliente no autenticado.");
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-	    }
+	     
+
+//	    if (cliente == null) {
+//	        logger.log(Level.WARNING, "Cliente no autenticado.");
+//	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//	    }
 
 	    Long clienteId = cliente.getId();
 	    logger.log(Level.INFO, "Pedido recibido: {0}", pedido);

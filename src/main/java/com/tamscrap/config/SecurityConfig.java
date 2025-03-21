@@ -37,29 +37,48 @@ public class SecurityConfig {
 			throws Exception {
 		return authConfig.getAuthenticationManager();
 	}
-
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		String[] publicEndpoints = { "/api/producto/listar", "/api/producto/buscar/**", "/api/producto/ver/**",
-				"/api/producto/categoria/**", "/api/auth/**", "/home", "/carrito", "/api/pedidos/addPedido", "/",
-				"/api/clientes/addCliente", "/register",
-
-				"/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**" };
-
-		http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth.requestMatchers(publicEndpoints)
+		http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
+				.requestMatchers("/api/producto/listar", "/api/producto/buscar/**", "/api/producto/ver/**",
+						"/api/producto/categoria/**", "/api/auth/**", "/home", "/carrito", "/api/pedidos/addPedido",
+						"/", "/api/clientes/addCliente","/register")
 				.permitAll().requestMatchers("/api/carrito/editar/**").authenticated()
-				.requestMatchers("/api/pedidos/delete/**", "/api/pedidos/editar/**").hasAuthority("ADMIN")
-				.requestMatchers("/api/pedidos/editarEstado/**").hasAuthority("ADMIN")
+				.requestMatchers("/api/pedidos/delete/**","/api/pedidos/editar/**").hasAnyAuthority("USER", "ADMIN")
 				.requestMatchers("/api/pedidos/**", "/profile/**").authenticated()
 				.requestMatchers("/api/producto/addProducto", "/api/producto/editar/**", "/api/producto/borrar/**")
 				.hasAuthority("ADMIN").anyRequest().authenticated())
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+ 
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
+
+//	@Bean
+//	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//		String[] publicEndpoints = { "/api/producto/listar", "/api/producto/buscar/**", "/api/producto/ver/**",
+//				"/api/producto/categoria/**", "/api/auth/**", "/home", "/carrito", "/api/pedidos/addPedido", "/",
+//				"/api/clientes/addCliente", "/register",
+//
+//				"/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**" };
+//
+//		http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth.requestMatchers(publicEndpoints)
+//				.permitAll().requestMatchers("/api/carrito/editar/**").authenticated()
+//				.requestMatchers("/api/pedidos/delete/**", "/api/pedidos/editar/**").hasAuthority("ADMIN")
+//				.requestMatchers("/api/pedidos/editarEstado/**").hasAuthority("ADMIN")
+//				.requestMatchers("/api/pedidos/**", "/profile/**").authenticated()
+//				.requestMatchers("/api/producto/addProducto", "/api/producto/editar/**", "/api/producto/borrar/**")
+//				.hasAuthority("ADMIN").anyRequest().authenticated())
+//				.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+//				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//
+//		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//		return http.build();
+//	}
 
 	@Configuration
 	public class CorsConfig implements WebMvcConfigurer {
